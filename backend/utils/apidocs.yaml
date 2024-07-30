@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  title: Law AI API
+  description: Backend service for Law AI.
+  version: 1.0.0
+
+paths:
+  /v1/userData/{userID}:
+    get:
+      summary: Admin path to retrieve the queried user's profile data.
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: The ID of the user whose profile data is requested.
+          schema:
+            type: integer
+      responses:
+        '200': 
+          description: Successful deletion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Access to user profile data was denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+    patch:
+      summary: Admin path to update the given user's profile data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful update of user data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    $ref: '#/components/schemas/User'
+        '403':
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Admin path to delete a user.
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: The ID of the user to be deleted.
+          schema:
+            type: integer
+      responses:
+        '200': 
+          description: User object containing user profile data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Deletion denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/endpointUsage:
+    get:
+      summary: Admin path to retrieve the usage data for each endpoint.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Endpoint'
+        '403':
+          description: Access to endpoint data was denied because not admin.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/register:
+    post:
+      summary: path to register a user.
+      responses:
+        '201': 
+          description: Successful registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: user data input invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+        '500':
+          description: Server error occurred while registering user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/login:
+    post:
+      summary: path to register a user.
+      responses:
+        '200': 
+          description: Successful login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: user data input invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: user input invalid email or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: user not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error occurred while logging user in.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/users:
+     get:
+      summary: Admin path to retrieve the data for each user when user clicks refresh button.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Access to user data was denied because not admin.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/auth/status:
+     get:
+      summary:  path to check status (admin or not) of the current user along with intial state of all usrs for user table that admins see.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: user does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/logout:
+    get:
+      summary:  path to log user out
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        password:
+          type: string
+        isAdmin:
+          type: boolean
+        apiCalls:
+          type: integer
+        createdAt:
+          type: string
+    Endpoint:
+      type: object
+      properties:
+        id:
+          type: integer
+        method:
+          type: string
+        endpointName:
+          type: string
+        numberofRequests:
+          type: integer
+
